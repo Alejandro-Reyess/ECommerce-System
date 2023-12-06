@@ -1,7 +1,9 @@
-import UserRegistration
-import ShoppingCart
-import ProductManagement
-import ProductBrowsing
+import Functions.UserRegistration as UserRegistration
+import Functions.ShoppingCart as ShoppingCart
+import Functions.ProductManagement as ProductManagement
+import Functions.ProductBrowsing as ProductBrowsing
+import Functions.UserReview as UserReview
+import Functions.DiscountPromotionManagement as DiscountPromotionManagement
 
 while True:
   print("1. User Registration")
@@ -13,6 +15,8 @@ while True:
   print("7. Search Products")
   print("8. Filter Products")
   print("9. Sort Products")
+  print("10. User Review")
+  print("11. Discount Promotion Management")
   print("0. Exit")
 
   choice = int(input("Enter your choice: "))
@@ -35,6 +39,10 @@ while True:
     ProductBrowsing.filter_products()
   elif choice == 9:
     ProductBrowsing.sort_products()
+  elif choice == 10:
+    UserReview.write_review()
+  elif choice == 11:
+    DiscountPromotionManagement.create_promotion()
   elif choice == 0:
     break
   else:
