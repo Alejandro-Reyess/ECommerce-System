@@ -9,7 +9,9 @@ class Product:
             self.discount = discount_percent
             print(f"Discount of {discount_percent}% applied to {self.name}.")
         else:
-            print("Invalid discount percentage. Please provide a percentage between 0 and 100.")
+            print(
+                "Invalid discount percentage. Please provide a percentage between 0 and 100."
+            )
 
     def get_discounted_price(self):
         discounted_price = self.price * (1 - self.discount / 100)
