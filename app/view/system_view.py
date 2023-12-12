@@ -9,19 +9,18 @@ class AuthenticationView:
     def __init__(self, root):
         self.root = root
         self.root.title("Login")
-        self.root.geometry("400x300")  # Definindo o tamanho da janela
+        self.root.geometry("400x300")
 
         self.user_control = UserControl()
 
-        # Login Window
         self.login_frame = tk.Frame(self.root)
         self.login_frame.pack()
 
-        tk.Label(self.login_frame, text="Username").pack()  # Nome do campo de usuário
+        tk.Label(self.login_frame, text="Username").pack()
         self.username_entry = tk.Entry(self.login_frame)
         self.username_entry.pack()
 
-        tk.Label(self.login_frame, text="Password").pack()  # Nome do campo de senha
+        tk.Label(self.login_frame, text="Password").pack()
         self.password_entry = tk.Entry(self.login_frame, show="*")
         self.password_entry.pack()
 
@@ -30,37 +29,35 @@ class AuthenticationView:
         )
         self.login_button.pack()
 
+        self.admin_login_button = tk.Button(
+            self.login_frame, text="Admin Login", command=self.admin_login
+        )
+        self.admin_login_button.pack()
+
         self.register_button = tk.Button(
             self.login_frame, text="Register", command=self.show_register
         )
         self.register_button.pack()
 
-        # Registration Window
         self.register_frame = tk.Frame(self.root)
 
-        tk.Label(
-            self.register_frame, text="Full Name"
-        ).pack()  # Nome do campo de nome completo
+        tk.Label(self.register_frame, text="Full Name").pack()
         self.name_entry = tk.Entry(self.register_frame)
         self.name_entry.pack()
 
-        tk.Label(self.register_frame, text="E-mail").pack()  # Nome do campo de e-mail
+        tk.Label(self.register_frame, text="E-mail").pack()
         self.email_entry = tk.Entry(self.register_frame)
         self.email_entry.pack()
 
-        tk.Label(
-            self.register_frame, text="Address"
-        ).pack()  # Nome do campo de endereço
+        tk.Label(self.register_frame, text="Address").pack()
         self.address_entry = tk.Entry(self.register_frame)
         self.address_entry.pack()
 
-        tk.Label(
-            self.register_frame, text="Username"
-        ).pack()  # Nome do campo de usuário
+        tk.Label(self.register_frame, text="Username").pack()
         self.new_username_entry = tk.Entry(self.register_frame)
         self.new_username_entry.pack()
 
-        tk.Label(self.register_frame, text="Password").pack()  # Nome do campo de senha
+        tk.Label(self.register_frame, text="Password").pack()
         self.new_password_entry = tk.Entry(self.register_frame, show="*")
         self.new_password_entry.pack()
 
@@ -72,17 +69,20 @@ class AuthenticationView:
         self.register_frame.pack_forget()
         self.admin_control = AdminUserControl()
 
-        # Admin Login Button
-        self.admin_login_button = tk.Button(
-            self.root, text="Admin Login", command=self.admin_login
+        self.back_to_login_button = tk.Button(
+            self.register_frame, text="Back to Login", command=self.show_login
         )
-        self.admin_login_button.place(x=10, y=10)  # Ajustando as coordenadas do botão
+        self.back_to_login_button.pack()
+
+    def show_login(self):
+        self.register_frame.pack_forget()
+        self.login_frame.pack()
 
     def admin_login(self):
         username = self.username_entry.get()
         password = self.password_entry.get()
         if self.admin_control.authenticate_admin(username, password):
-            print("Admin Login successful!")
+            messagebox.showinfo("Success", "Admin Login successful!")
             self.root.withdraw()
 
             def return_to_login():
@@ -94,7 +94,7 @@ class AuthenticationView:
             AdminManageProductView(root_manage_products, return_to_login)
             root_manage_products.mainloop()
         else:
-            print("Invalid admin credentials!")
+            messagebox.showerror("Error", "Invalid admin credentials!")
 
     def show_register(self):
         self.login_frame.pack_forget()
@@ -104,9 +104,20 @@ class AuthenticationView:
         username = self.username_entry.get()
         password = self.password_entry.get()
         if self.user_control.authenticate(username, password):
-            print("User Login successful!")
+            messagebox.showinfo("Success", "User Login successful!")
+            self.root.withdraw()
+
+            def return_to_login():
+                self.root.deiconify()
+                self.username_entry.delete(0, tk.END)
+                self.password_entry.delete(0, tk.END)
+
+            user_control = UserControl()
+            root_browsing = tk.Tk()
+            ProductBrowsingView(root_browsing, username, return_to_login, user_control)
+            root_browsing.mainloop()
         else:
-            print("Invalid username or password!")
+            messagebox.showerror("Error", "Invalid username or password!")
 
     def register_user(self):
         name = self.name_entry.get()
@@ -115,12 +126,10 @@ class AuthenticationView:
         username = self.new_username_entry.get()
         password = self.new_password_entry.get()
 
-        # Verifica se algum campo está vazio
         if not all([name, email, address, username, password]):
             messagebox.showerror("Error", "All fields are required")
             return
 
-        # Verifica se algum campo possui apenas espaços em branco
         if any(
             [
                 field.strip() == ""
@@ -131,13 +140,10 @@ class AuthenticationView:
             return
 
         self.user_control.create_user(name, email, address, username, password)
-        messagebox.showinfo(
-            "Success", "Account registered successfully"
-        )  # Popup de sucesso
+        messagebox.showinfo("Success", "Account registered successfully")
         self.register_frame.pack_forget()
         self.login_frame.pack()
 
-        # Limpa os campos após o registro
         self.name_entry.delete(0, tk.END)
         self.email_entry.delete(0, tk.END)
         self.address_entry.delete(0, tk.END)
@@ -153,13 +159,12 @@ class AdminManageProductView:
         self.root.geometry("600x400")
         self.return_to_login = return_to_login
 
-        # Frame para a lista de produtos com barra de rolagem
         self.products_frame = tk.Frame(self.root)
         self.products_frame.pack(fill=tk.BOTH, expand=True)
 
         self.canvas = tk.Canvas(self.products_frame)
         self.scrollbar = tk.Scrollbar(
-            self.products_frame, orient=tk.VERTICAL, command=self.canvas.yview
+            self.products_frame, orient=tk.VERTICAL, command=self.canvas.yview, width=25
         )
         self.scrollable_frame = tk.Frame(self.canvas)
 
@@ -181,12 +186,10 @@ class AdminManageProductView:
         add_button.pack(side=tk.BOTTOM, padx=20, pady=10)
 
         logout_button = tk.Button(self.root, text="Log Out", command=self.logout)
-        logout_button.pack(
-            side=tk.BOTTOM, padx=20, pady=10
-        )  # Chamada para exibir os produtos na inicialização
+        logout_button.pack(side=tk.BOTTOM, padx=20, pady=10)
 
     def show_products(self):
-        self.product_control.load_products()  # Carrega os produtos
+        self.product_control.load_products()
 
         for i, product in enumerate(self.product_control.products):
             tk.Label(
@@ -215,7 +218,10 @@ class AdminManageProductView:
 
         tk.Label(self.new_product_window, text="ID").grid(row=0, column=0)
         tk.Label(self.new_product_window, text="Name").grid(row=1, column=0)
-        tk.Label(self.new_product_window, text="Category").grid(row=2, column=0)
+        tk.Label(
+            self.new_product_window,
+            text="Category (Notebook, Headset, Keyboard, Mouser)",
+        ).grid(row=2, column=0)
         tk.Label(self.new_product_window, text="Price").grid(row=3, column=0)
 
         self.new_product_id_entry = tk.Entry(self.new_product_window)
@@ -258,11 +264,10 @@ class AdminManageProductView:
             return
 
         messagebox.showinfo("Success", "Product created successfully")
-        self.new_product_window.destroy()  # Fecha a janela de adição de produto
-        self.refresh_product_list()  # Atualiza a lista de produtos
+        self.new_product_window.destroy()
+        self.refresh_product_list()
 
     def refresh_product_list(self):
-        # Limpa a exibição atual dos produtos
         for widget in self.product_list_frame.winfo_children():
             widget.destroy()
 
@@ -274,7 +279,10 @@ class AdminManageProductView:
         self.edit_product_window.title("Edit Product")
 
         tk.Label(self.edit_product_window, text="Name").grid(row=0, column=0)
-        tk.Label(self.edit_product_window, text="Category").grid(row=1, column=0)
+        tk.Label(
+            self.edit_product_window,
+            text="Category (Notebook, Headset, Keyboard, Mouse)",
+        ).grid(row=1, column=0)
         tk.Label(self.edit_product_window, text="Price").grid(row=2, column=0)
 
         self.edit_name_entry = tk.Entry(self.edit_product_window)
@@ -334,5 +342,338 @@ class AdminManageProductView:
                 self.refresh_product_list()
 
     def logout(self):
-        self.root.destroy()  # Fecha a janela de gerenciamento de produtos
+        self.root.destroy()
         self.return_to_login()
+
+
+class ProductBrowsingView:
+    def __init__(self, root, logged_user, return_to_login, user_control):
+        self.root = root
+        self.logged_user = logged_user
+        self.return_to_login = return_to_login
+        self.user_control = user_control
+        self.root.title("Product Browsing")
+        self.root.geometry("800x600")
+
+        self.product_control = ProductControl(products=[])
+        self.product_control.load_products()
+
+        self.cart_button = tk.Button(self.root, text="Cart", command=self.go_to_cart)
+        self.cart_button.place(x=720, y=10)
+
+        self.sort_direction = tk.BooleanVar()
+        self.sort_direction.set(False)
+
+        self.sort_options = tk.StringVar()
+        self.sort_options.set("Sort by:")
+        self.sort_menu = tk.OptionMenu(
+            self.root,
+            self.sort_options,
+            "Sort by:",
+            "Name",
+            "Price",
+            command=self.sort_products,
+        )
+        self.sort_menu.place(x=100, y=50)
+        self.sort_menu.config(width=8)
+
+        self.search_entry = tk.Entry(self.root)
+        self.search_entry.place(x=550, y=50)
+
+        self.product_listbox = tk.Listbox(self.root)
+        self.product_listbox.place(x=10, y=100, width=780, height=450)
+
+        self.show_products()
+
+        self.category_var = tk.StringVar()
+        self.category_var.set("Select Category")
+        self.category_menu = tk.OptionMenu(
+            self.root,
+            self.category_var,
+            "Select Category",
+            "Notebook",
+            "Mouse",
+            "Headset",
+            "Keyboard",
+            command=self.filter_by_category,
+        )
+        self.category_menu.place(x=200, y=50)
+        self.category_menu.config(width=12)
+
+        self.min_price_entry = tk.Entry(self.root)
+        self.max_price_entry = tk.Entry(self.root)
+        self.min_price_entry.place(x=350, y=50)
+        self.max_price_entry.place(x=400, y=50)
+        self.min_price_entry.configure(width=self.min_price_entry["width"] - 2)
+        self.max_price_entry.configure(width=self.max_price_entry["width"] - 2)
+        self.filter_price_button = tk.Button(
+            self.root, text="Filter by Price", command=self.filter_by_price
+        )
+        self.filter_price_button.place(x=450, y=50)
+
+        self.search_button = tk.Button(
+            self.root, text="Search", command=self.search_products
+        )
+        self.search_button.place(x=650, y=45)
+
+        self.clear_button = tk.Button(
+            self.root, text="Clear", command=self.clear_filters
+        )
+        self.clear_button.place(x=550, y=10)
+
+        self.logout_button = tk.Button(self.root, text="Logout", command=self.logout)
+        self.logout_button.place(x=10, y=10)
+
+        self.edit_profile_button = tk.Button(
+            self.root, text="Edit Profile", command=self.edit_profile
+        )
+        self.edit_profile_button.place(x=10, y=40)
+
+    def sort_products(self, key):
+        reverse_order = self.sort_direction.get()
+
+        if key == "Name":
+            sorted_products = sorted(
+                self.filtered_products
+                if hasattr(self, "filtered_products")
+                else self.product_control.list_all_products(),
+                key=lambda product: product.name.lower(),
+                reverse=reverse_order,
+            )
+        elif key == "Price":
+            sorted_products = sorted(
+                self.filtered_products
+                if hasattr(self, "filtered_products")
+                else self.product_control.list_all_products(),
+                key=lambda product: float(product.price),
+                reverse=reverse_order,
+            )
+        else:
+            sorted_products = (
+                self.filtered_products
+                if hasattr(self, "filtered_products")
+                else self.product_control.list_all_products()
+            )
+
+        self.display_products(sorted_products)
+        self.sort_direction.set(not reverse_order)
+
+    def search_products(self):
+        search_term = self.search_entry.get()
+        searched_products = self.product_control.search_product_by_name(search_term)
+        if hasattr(self, "filtered_products") and self.filtered_products:
+            filtered_by_search = [
+                product
+                for product in searched_products
+                if product in self.filtered_products
+            ]
+            self.filtered_products = filtered_by_search
+        else:
+            self.filtered_products = searched_products
+        self.sort_products(self.sort_options.get())
+
+    def filter_by_category(self, *args):
+        category = self.category_var.get()
+
+        if category != "Select Category":
+            filtered_products = self.product_control.filter_by_category(category)
+            if hasattr(self, "filtered_products") and self.filtered_products:
+                self.filtered_products = [
+                    product
+                    for product in filtered_products
+                    if product in self.filtered_products
+                ]
+            else:
+                self.filtered_products = filtered_products
+        else:
+            self.filtered_products = None
+
+        self.sort_products(self.sort_options.get())
+
+    def filter_by_price(self):
+        if hasattr(self, "filtered_products") and self.filtered_products:
+            filtered_products = self.filter_by_price_range(
+                self.min_price_entry.get(), self.max_price_entry.get()
+            )
+            self.filtered_products = [
+                product
+                for product in filtered_products
+                if product in self.filtered_products
+            ]
+        else:
+            self.filter_by_price_and_search()
+
+        self.sort_products(self.sort_options.get())
+
+    def filter_by_price_and_search(self):
+        search_term = self.search_entry.get()
+        searched_products = self.product_control.search_product_by_name(search_term)
+        if hasattr(self, "filtered_products") and self.filtered_products:
+            filtered_by_price = self.filter_by_price_range(
+                self.min_price_entry.get(), self.max_price_entry.get()
+            )
+            self.filtered_products = [
+                product for product in searched_products if product in filtered_by_price
+            ]
+        else:
+            self.filtered_products = searched_products
+        self.sort_products(self.sort_options.get())
+
+    def sort_products_after_search_and_filter(self):
+        self.sort_products(self.sort_options.get())
+
+    def filter_by_category_and_price(self):
+        category = self.category_var.get()
+        filtered_by_category = (
+            self.product_control.filter_by_category(category)
+            if category != "Select Category"
+            else self.product_control.list_all_products()
+        )
+
+        filtered_by_price = self.filter_by_price_range(
+            self.min_price_entry.get(), self.max_price_entry.get()
+        )
+
+        if filtered_by_category is None:
+            self.filtered_products = filtered_by_price
+        else:
+            if hasattr(self, "filtered_products") and self.filtered_products:
+                self.filtered_products = [
+                    product
+                    for product in filtered_by_category
+                    if product in self.filtered_products
+                    and product in filtered_by_price
+                ]
+            else:
+                self.filtered_products = [
+                    product
+                    for product in filtered_by_category
+                    if product in filtered_by_price
+                ]
+
+        self.sort_products_after_search_and_filter()
+
+    def filter_by_price_range(self, min_price, max_price):
+        try:
+            min_val = float(min_price) if min_price else float("-inf")
+            max_val = float(max_price) if max_price else float("inf")
+        except ValueError:
+            return self.product_control.list_all_products()
+
+        filtered_products = [
+            product
+            for product in self.product_control.list_all_products()
+            if self.is_within_price_range(product, min_val, max_val)
+        ]
+        return filtered_products
+
+    def is_within_price_range(self, product, min_val, max_val):
+        try:
+            product_price = float(product.price)
+            return min_val <= product_price <= max_val
+        except ValueError:
+            return False
+
+    def clear_filters(self):
+        self.search_entry.delete(0, tk.END)
+        self.category_var.set("Select Category")
+        self.min_price_entry.delete(0, tk.END)
+        self.max_price_entry.delete(0, tk.END)
+        self.filtered_products = None
+        self.show_products()
+
+    def display_products(self, products):
+        self.product_listbox.delete(0, tk.END)
+        for product in products:
+            self.product_listbox.insert(
+                tk.END,
+                f"{product.name} - Price: ${product.price}",
+            )
+
+    def logout(self):
+        self.root.destroy()
+        self.return_to_login()
+
+    def show_products(self):
+        products = self.product_control.list_all_products()
+        self.display_products(products)
+
+    def go_to_cart(self):
+        # Lógica para redirecionar para a janela de carrinho
+        pass
+
+    def edit_profile(self):
+        user = self.user_control.get_user_info(self.logged_user)
+        if user:
+            edit_window = tk.Toplevel(self.root)
+            edit_window.title("Edit Profile")
+            edit_window.geometry("300x400")
+
+            tk.Label(edit_window, text="Name:").pack()
+            name_entry = tk.Entry(edit_window)
+            name_entry.insert(0, user.name)
+            name_entry.pack()
+
+            tk.Label(edit_window, text="Email:").pack()
+            email_entry = tk.Entry(edit_window)
+            email_entry.insert(0, user.email)
+            email_entry.pack()
+
+            tk.Label(edit_window, text="Address:").pack()
+            address_entry = tk.Entry(edit_window)
+            address_entry.insert(0, user.address)
+            address_entry.pack()
+
+            tk.Label(edit_window, text="Username:").pack()
+            username_entry = tk.Entry(edit_window)
+            username_entry.insert(0, user.username)
+            username_entry.pack()
+
+            tk.Label(edit_window, text="Password:").pack()
+            password_entry = tk.Entry(edit_window)
+            password_entry.insert(0, user.password)
+            password_entry.pack()
+
+            update_button = tk.Button(
+                edit_window,
+                text="Update",
+                command=lambda: self.update_profile(
+                    user,
+                    edit_window,
+                    name_entry.get(),
+                    email_entry.get(),
+                    address_entry.get(),
+                    username_entry.get(),
+                    password_entry.get(),
+                ),
+            )
+            update_button.pack()
+
+        else:
+            messagebox.showerror("Error", "User not found!")
+
+    def update_profile(
+        self,
+        user,
+        edit_window,
+        new_name,
+        new_email,
+        new_address,
+        new_username,
+        new_password,
+    ):
+        updated = self.user_control.edit_user(
+            user.username,
+            {
+                "name": new_name,
+                "email": new_email,
+                "address": new_address,
+                "username": new_username,
+                "password": new_password,
+            },
+        )
+        if updated:
+            messagebox.showinfo("Success", "Profile updated successfully!")
+            edit_window.destroy()
+        else:
+            messagebox.showerror("Error", "Failed to update profile!")

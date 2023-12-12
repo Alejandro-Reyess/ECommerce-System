@@ -58,3 +58,35 @@ class ProductControl:
                 self.save_products()
                 return True
         return False
+
+    def list_all_products(self):
+        return self.products
+
+    def search_product_by_name(self, search_term):
+        return [
+            product
+            for product in self.products
+            if search_term.lower() in product.name.lower()
+        ]
+
+    def filter_by_category(self, category):
+        return [
+            product
+            for product in self.products
+            if product.category.lower() == category.lower()
+        ]
+
+    def filter_by_price_range(self, min_price, max_price):
+        return [
+            product
+            for product in self.products
+            if min_price <= product.price <= max_price
+        ]
+
+    def sort_by_name(self, reverse=False):
+        return sorted(
+            self.products, key=lambda product: product.name.lower(), reverse=reverse
+        )
+
+    def sort_by_price(self, reverse=False):
+        return sorted(self.products, key=lambda product: product.price, reverse=reverse)

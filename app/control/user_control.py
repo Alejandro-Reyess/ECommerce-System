@@ -26,6 +26,12 @@ class UserControl:
             open(file_path, "w").close()
             self.users = []
 
+    def get_user_info(self, username):
+        for user in self.users:
+            if user.username == username:
+                return user
+        return None
+
     def save_users(self):
         file_path = self.get_directory()
         with open(file_path, "w") as file:
