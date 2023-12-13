@@ -1,5 +1,13 @@
 class Product:
-    def __init__(self, product_id, name, category, price, review=0, rating=0):
+    def __init__(
+        self,
+        product_id,
+        name,
+        category,
+        price,
+        review="",
+        rating=0,
+    ):
         self.product_id = product_id
         self.name = name
         self.category = category
