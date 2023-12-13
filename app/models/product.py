@@ -5,15 +5,15 @@ class Product:
         name,
         category,
         price,
-        review="",
         rating=0,
+        review="",
     ):
         self.product_id = product_id
         self.name = name
         self.category = category
-        self.price = price
-        self.review = review
+        self.price = float(price)
         self.rating = rating
+        self.review = review
 
     def to_dict(self):
         return {
@@ -21,8 +21,8 @@ class Product:
             "name": self.name,
             "category": self.category,
             "price": self.price,
-            "review": self.review,
             "rating": self.rating,
+            "review": self.review,
         }
 
     @classmethod

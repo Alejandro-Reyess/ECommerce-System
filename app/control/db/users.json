@@ -1,9 +1,122 @@
 [
     {
-        "name": "Alejandro Reyes Silva",
-        "email": "alejitors@hotmail.com",
+        "name": "Alejandro Reyes",
+        "email": "alejitors@gmail.com",
         "address": "Avenida Roberto Mascarenhas de Brito, 126",
         "username": "alejitors",
-        "password": "123"
+        "password": "123",
+        "cart": {
+            "1": 1
+        },
+        "orders": [
+            {
+                "order_number": 1,
+                "products": [
+                    {
+                        "product_id": "22",
+                        "name": "Samsung Book 3",
+                        "category": "Notebook",
+                        "price": "2500",
+                        "review": "",
+                        "rating": 0
+                    },
+                    {
+                        "product_id": "3",
+                        "name": "Mouse Redragon",
+                        "category": "Mouse",
+                        "price": "100",
+                        "review": 0,
+                        "rating": 0
+                    }
+                ],
+                "total_price": 2600.0,
+                "address": "Avenida Roberto Mascarenhas de Brito, 126",
+                "card_number": "1111111111111",
+                "exp_date": "1111",
+                "cvv": "123",
+                "card_name": "Alejandro Reyes",
+                "status": "Payment Approved - Product Shipped - Product Received"
+            },
+            {
+                "order_number": 2,
+                "products": [
+                    {
+                        "product_id": "3",
+                        "name": "Mouse Redragon",
+                        "category": "Mouse",
+                        "price": "100",
+                        "review": 0,
+                        "rating": 0
+                    },
+                    {
+                        "product_id": "16",
+                        "name": "Keyboard LED Gamer",
+                        "category": "Keyboard",
+                        "price": "140",
+                        "review": 0,
+                        "rating": 0
+                    }
+                ],
+                "total_price": 240.0,
+                "address": "Avenida Roberto Mascarenhas de Brito, 126",
+                "card_number": "1111111111",
+                "exp_date": "1111",
+                "cvv": "123",
+                "card_name": "Alejandro",
+                "status": "Payment Approved - Product Shipped - Awaiting Receipt"
+            },
+            {
+                "order_number": 3,
+                "products": [
+                    {
+                        "product_id": "1",
+                        "name": "Samsung Notebook",
+                        "category": "Notebook",
+                        "price": "800",
+                        "reviews": [],
+                        "ratings": []
+                    }
+                ],
+                "total_price": 800.0,
+                "address": "Avenida Roberto Mascarenhas de Brito, 126",
+                "card_number": "111111111111",
+                "exp_date": "1111",
+                "cvv": "111",
+                "card_name": "Alejandro",
+                "status": "Payment Approved - Product Shipped - Awaiting Receipt"
+            }
+        ]
+    },
+    {
+        "name": "joao correia",
+        "email": "j-victor.cs@hotmail.com",
+        "address": "BIU",
+        "username": "joao",
+        "password": "jv123",
+        "cart": {
+            "1": 1
+        },
+        "orders": [
+            {
+                "order_number": 1,
+                "products": [
+                    {
+                        "product_id": "4",
+                        "name": "Keyboard Logitech",
+                        "category": "Keyboard",
+                        "price": "125",
+                        "review": 0,
+                        "rating": 0
+                    }
+                ],
+                "total_price": 125.0,
+                "address": "BIU",
+                "card_number": "jjjscscdcs",
+                "exp_date": "55/24",
+                "cvv": "578",
+                "card_name": "jv",
+                "status": "Payment Approved - Product Shipped - Product Received"
+            }
+        ]
     }
 ]

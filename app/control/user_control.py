@@ -34,9 +34,20 @@ class UserControl:
 
     def save_users(self):
         file_path = self.get_directory()
-        with open(file_path, "w") as file:
-            data = [user.to_dict() for user in self.users]
+        with open(file_path, "r+") as file:
+            data = json.load(file)
+            file.seek(0)
+            for user in self.users:
+                existing_user = next(
+                    (u for u in data if u["username"] == user.username), None
+                )
+                if existing_user:
+                    existing_user.update(user.to_dict())
+                else:
+                    data.append(user.to_dict())
+            file.seek(0)
             json.dump(data, file, indent=4)
+            file.truncate()
 
     def authenticate(self, username, password):
         for user in self.users:
@@ -74,3 +85,17 @@ class UserControl:
 
     def clear_cart(self):
         self.cart = {}
+
+    def finalize_order(self, username, order):
+        for user in self.users:
+            if user.username == username:
+                user.add_order_to_history(order)
+                self.save_users()
+                return True
+        return False
+
+    def load_status(self):
+        for order in self.orders:
+            if order.order_number == self.order_number:
+                self.status = order.status
+                break

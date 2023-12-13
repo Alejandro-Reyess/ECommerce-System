@@ -1,6 +1,8 @@
 import tkinter as tk
 from tkinter import messagebox
+from tkinter import scrolledtext
 import tkinter.simpledialog as simpledialog
+from models.order import Order
 from control.user_control import UserControl
 from control.admin_user_control import AdminUserControl
 from control.product_control import ProductControl
@@ -140,7 +142,11 @@ class AuthenticationView:
             messagebox.showerror("Error", "Fields cannot be blank")
             return
 
-        self.user_control.create_user(name, email, address, username, password)
+        new_user = self.user_control.create_user(
+            name, email, address, username, password
+        )
+        new_user.orders = []
+
         messagebox.showinfo("Success", "Account registered successfully")
         self.register_frame.pack_forget()
         self.login_frame.pack()
@@ -357,6 +363,7 @@ class ProductBrowsingView:
         self.root = root
         self.return_to_login = return_to_login
         self.filtered_products = None
+        self.order_details_window = None
         self.user_control = user_control
         self.root.title("Product Browsing")
         self.root.geometry("800x600")
@@ -364,7 +371,21 @@ class ProductBrowsingView:
         self.product_control.load_products()
 
         self.logged_user = self.user_control.get_user_info(logged_user)
-        if not self.logged_user:
+        if self.logged_user:
+            orders_data = self.logged_user.orders
+            self.logged_user.orders = [
+                Order(
+                    products=order_data.get("products", {}),
+                    total_price=order_data.get("total_price", 0),
+                    address=order_data.get("address", ""),
+                    card_number=order_data.get("card_number", ""),
+                    exp_date=order_data.get("exp_date", ""),
+                    cvv=order_data.get("cvv", ""),
+                    card_name=order_data.get("card_name", ""),
+                )
+                for order_data in orders_data
+            ]
+        else:
             messagebox.showerror("Error", "User not found!")
 
         self.product_listbox = tk.Listbox(self.root)
@@ -378,6 +399,11 @@ class ProductBrowsingView:
             self.root, text="Edit Profile", command=self.edit_profile
         )
         self.edit_profile_button.place(x=10, y=40)
+
+        self.order_button = tk.Button(
+            self.root, text="Orders", command=self.show_orders
+        )
+        self.order_button.place(x=10, y=70)
 
         self.search_entry = tk.Entry(self.root)
         self.search_entry.place(x=100, y=55)
@@ -435,8 +461,10 @@ class ProductBrowsingView:
         )
         self.clear_button.place(x=750, y=50)
 
-        self.cart_button = tk.Button(self.root, text="Cart", command=self.view_cart)
-        self.cart_button.place(x=750, y=10)
+        self.cart_button = tk.Button(
+            self.root, text="Shopping Cart", command=self.view_cart
+        )
+        self.cart_button.place(x=700, y=10)
 
     def sort_products(self, key):
         reverse_order = self.sort_direction.get()
@@ -644,7 +672,6 @@ class ProductBrowsingView:
 
     def update_profile(
         self,
-        user,
         edit_window,
         new_name,
         new_email,
@@ -653,7 +680,7 @@ class ProductBrowsingView:
         new_password,
     ):
         updated = self.user_control.edit_user(
-            user.username,
+            self.logged_user.username,  # Usando self.logged_user.username para identificar o usuário
             {
                 "name": new_name,
                 "email": new_email,
@@ -776,6 +803,196 @@ class ProductBrowsingView:
         if len(self.logged_user.cart) == 0:
             cart_listbox.destroy()
 
-    def buy_products(self):
-        # Logic to proceed with the purchase goes here
+    def order_placement(self):
+        order_window = tk.Toplevel(self.root)
+        order_window.title("Order Placement")
+        order_window.geometry("600x600")
+
+        tk.Label(
+            order_window, text="Selected Products", font=("Arial", 12, "bold")
+        ).pack()
+
+        cart_listbox = scrolledtext.ScrolledText(order_window, height=10)
+        cart_listbox.pack()
+
+        total_price = 0
+        for product, quantity in self.logged_user.cart.items():
+            product_total = float(product.price) * quantity
+            total_price += product_total
+            cart_listbox.insert(
+                tk.END,
+                f"{product.name} - Quantity: {quantity} - Total Price: ${product_total:.2f}\n",
+            )
+
+        tk.Label(order_window, text=f"Total Price: ${total_price:.2f}").pack()
+        tk.Label(order_window, text="Address:", font=("Arial", 12, "bold")).pack()
+        tk.Label(order_window, text=self.logged_user.address).pack()
+
+        tk.Label(
+            order_window, text="Payment Information", font=("Arial", 12, "bold")
+        ).pack()
+
+        tk.Label(order_window, text="Card Number (16 digits):").pack()
+        card_number_entry = tk.Entry(order_window)
+        card_number_entry.pack()
+
+        tk.Label(order_window, text="Expiration Date (MM/YY):").pack()
+        exp_date_entry = tk.Entry(order_window)
+        exp_date_entry.pack()
+
+        tk.Label(order_window, text="CVV (3 digits):").pack()
+        cvv_entry = tk.Entry(order_window)
+        cvv_entry.pack()
+
+        tk.Label(order_window, text="Cardholder's Name:").pack()
+        card_name_entry = tk.Entry(order_window)
+        card_name_entry.pack()
+
+        finish_button = tk.Button(
+            order_window,
+            text="Finalize Purchase",
+            command=lambda: self.finalize_purchase(
+                order_window,
+                total_price,
+                card_number_entry.get(),
+                exp_date_entry.get(),
+                cvv_entry.get(),
+                card_name_entry.get(),
+            ),
+        )
+        finish_button.pack()
+
+    def finalize_purchase(
+        self, order_window, total_price, card_number, exp_date, cvv, card_name
+    ):
+        if not (card_number and exp_date and cvv and card_name):
+            messagebox.showerror("Error", "Please fill in all required fields.")
+            return
+
+        logged_user = self.logged_user
+        new_order = Order(
+            products=list(logged_user.cart.keys()),
+            total_price=total_price,
+            address=logged_user.address,
+            card_number=card_number,
+            exp_date=exp_date,
+            cvv=cvv,
+            card_name=card_name,
+        )
+        logged_user.add_order(new_order)
+        self.user_control.save_users()
+        order_window.destroy()
+        messagebox.showinfo("Success", "Purchase completed successfully!")
+
+    def show_orders(self):
+        orders_window = tk.Toplevel(self.root)
+        orders_window.title("Your Orders")
+        orders_window.geometry("600x400")
+
+        orders_listbox = tk.Listbox(orders_window)
+        orders_listbox.pack(fill=tk.BOTH, expand=True)
+
+        for order in self.logged_user.orders:
+            orders_listbox.insert(
+                tk.END,
+                f"Order Number: {order.order_number} - Total Price: ${order.total_price:.2f}",
+            )
+
+        orders_listbox.bind(
+            "<Double-Button-1>",
+            lambda event: self.view_order_details(orders_listbox, orders_window),
+        )
+
+    def view_order_details(self, orders_listbox, orders_window):
+        selected_index = orders_listbox.curselection()
+        if selected_index:
+            selected_order = self.logged_user.orders[selected_index[0]]
+
+            order_details_window = tk.Toplevel(orders_window)
+            order_details_window.title(
+                f"Order Details - Order Number: {selected_order.order_number}"
+            )
+            order_details_window.geometry("400x300")
+
+            tk.Label(
+                order_details_window,
+                text=f"Total Price: ${selected_order.total_price:.2f}",
+            ).pack()
+            tk.Label(
+                order_details_window, text=f"Address: {selected_order.address}"
+            ).pack()
+            tk.Label(
+                order_details_window, text=f"Card Number: {selected_order.card_number}"
+            ).pack()
+            tk.Label(
+                order_details_window, text=f"Expiration Date: {selected_order.exp_date}"
+            ).pack()
+            tk.Label(order_details_window, text=f"CVV: {selected_order.cvv}").pack()
+            tk.Label(
+                order_details_window,
+                text=f"Cardholder's Name: {selected_order.card_name}",
+            ).pack()
+
+            status_label = tk.Label(
+                order_details_window, text=f"Status: {selected_order.get_status()}"
+            )
+            status_label.pack()
+
+            if (
+                selected_order.get_status()
+                == "Payment Approved - Product Shipped - Awaiting Receipt"
+            ):
+                confirm_button = tk.Button(
+                    order_details_window,
+                    text="Confirm Receipt",
+                    command=lambda: self.confirm_receipt(
+                        selected_order, status_label, order_details_window
+                    ),
+                )
+                confirm_button.pack()
+
+            elif (
+                selected_order.get_status()
+                == "Payment Approved - Product Shipped - Product Received"
+            ):
+                self.add_review_button(selected_order, order_details_window)
+
+    def confirm_receipt(self, order, status_label, order_details_window):
+        order.confirm_receipt()
+        status_label.config(text=f"Status: {order.get_status()}")
+        self.user_control.save_users()
+
+        if (
+            order.get_status()
+            == "Payment Approved - Product Shipped - Product Received"
+        ):
+            # Remove the "Confirm Receipt" button
+            self.remove_confirm_receipt_button(order_details_window)
+
+            # Add the "Review Product" button
+            self.add_review_button(order, order_details_window)
+
+    def remove_confirm_receipt_button(self, order_details_window):
+        for widget in order_details_window.winfo_children():
+            if isinstance(widget, tk.Button) and widget["text"] == "Confirm Receipt":
+                widget.destroy()  # Use destroy() instead of pack_forget()
+
+    def add_review_button(self, order, order_details_window):
+        # Check if the "Review Product" button already exists before adding it
+        existing_review_buttons = [
+            widget
+            for widget in order_details_window.winfo_children()
+            if isinstance(widget, tk.Button) and widget["text"] == "Review Product"
+        ]
+
+        if not existing_review_buttons:
+            review_button = tk.Button(
+                order_details_window,
+                text="Review Product",
+                command=lambda: self.review_product(order, order_details_window),
+            )
+            review_button.pack()
+
+    def review_product(self, order, order_details_window):
+        # Implement the functionality for reviewing the product
         pass
