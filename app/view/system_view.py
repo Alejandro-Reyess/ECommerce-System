@@ -160,6 +160,8 @@ class AdminManageProductView:
         self.root.geometry("600x400")
         self.return_to_login = return_to_login
 
+        self.product_list_frame = tk.Frame(self.root)
+        self.product_list_frame.pack(fill=tk.BOTH, expand=True)
         self.products_frame = tk.Frame(self.root)
         self.products_frame.pack(fill=tk.BOTH, expand=True)
 
@@ -223,7 +225,9 @@ class AdminManageProductView:
             self.new_product_window,
             text="Category (Notebook, Headset, Keyboard, Mouse)",
         ).grid(row=2, column=0)
-        tk.Label(self.new_product_window, text="Price").grid(row=3, column=0)
+        tk.Label(self.new_product_window, text="Price (Example: 190)").grid(
+            row=3, column=0
+        )
 
         self.new_product_id_entry = tk.Entry(self.new_product_window)
         self.new_product_id_entry.grid(row=0, column=1)
@@ -272,7 +276,6 @@ class AdminManageProductView:
         for widget in self.product_list_frame.winfo_children():
             widget.destroy()
 
-        # Exibe novamente os produtos atualizados
         self.show_products()
 
     def edit_product(self, product):
@@ -284,7 +287,9 @@ class AdminManageProductView:
             self.edit_product_window,
             text="Category (Notebook, Headset, Keyboard, Mouse)",
         ).grid(row=1, column=0)
-        tk.Label(self.edit_product_window, text="Price").grid(row=2, column=0)
+        tk.Label(self.edit_product_window, text="Price (Example: 190)").grid(
+            row=2, column=0
+        )
 
         self.edit_name_entry = tk.Entry(self.edit_product_window)
         self.edit_name_entry.grid(row=0, column=1)
@@ -508,7 +513,7 @@ class ProductBrowsingView:
     def filter_by_category(self, *args):
         category = self.category_var.get()
         if category == "Select Category":
-            self.filtered_products = None  # Resetar filtro de categoria
+            self.filtered_products = None
         else:
             filtered_by_category = self.product_control.filter_by_category(category)
             if self.filtered_products:

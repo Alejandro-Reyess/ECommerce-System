@@ -158,5 +158,29 @@
         "price": "1000",
         "review": 0,
         "rating": 0
+    },
+    {
+        "product_id": "21",
+        "name": "Mouse Hyperx PulseFire",
+        "category": "Mouse",
+        "price": "179",
+        "review": "",
+        "rating": 0
+    },
+    {
+        "product_id": "22",
+        "name": "Samsung Book 3",
+        "category": "Notebook",
+        "price": "2500",
+        "review": "",
+        "rating": 0
+    },
+    {
+        "product_id": "23",
+        "name": "Cloud Hyperx",
+        "category": "Headset",
+        "price": "220",
+        "review": "",
+        "rating": 0
     }
 ]
