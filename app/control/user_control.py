@@ -34,8 +34,8 @@ class UserControl:
 
     def save_users(self):
         file_path = self.get_directory()
-        with open(file_path, "r+") as file:
-            data = json.load(file)
+        with open(file_path, "w") as file:
+            data = [user.to_dict() for user in self.users]
             file.seek(0)
             for user in self.users:
                 existing_user = next(

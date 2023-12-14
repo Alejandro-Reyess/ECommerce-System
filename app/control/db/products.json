@@ -3,7 +3,7 @@
         "product_id": "1",
         "name": "Samsung Notebook",
         "category": "Notebook",
-        "price": "800",
+        "price": 800.0,
         "rating": 0,
         "review": ""
     },
@@ -12,6 +12,174 @@
         "name": "Samsung Book3 Ultra",
         "category": "Notebook",
         "price": 3000.0,
+        "rating": 0,
+        "review": ""
+    },
+    {
+        "product_id": "3",
+        "name": "Redragon Headset",
+        "category": "Headset",
+        "price": 200.0,
+        "rating": 0,
+        "review": ""
+    },
+    {
+        "product_id": "4",
+        "name": "Redragon Mechanic Keyboard",
+        "category": "Keyboard",
+        "price": 350.0,
+        "rating": 0,
+        "review": ""
+    },
+    {
+        "product_id": "5",
+        "name": "Redragon Semi-Mechanic Keyboard",
+        "category": "Keyboard",
+        "price": 250.0,
+        "rating": 0,
+        "review": ""
+    },
+    {
+        "product_id": "6",
+        "name": "Redragon Keyboard RGB",
+        "category": "Keyboard",
+        "price": 100.0,
+        "rating": 0,
+        "review": ""
+    },
+    {
+        "product_id": "7",
+        "name": "Redragon Headset Pro",
+        "category": "Headset",
+        "price": 550.0,
+        "rating": 0,
+        "review": ""
+    },
+    {
+        "product_id": "8",
+        "name": "Redragon Headset RGB",
+        "category": "Headset",
+        "price": 280.0,
+        "rating": 0,
+        "review": ""
+    },
+    {
+        "product_id": "9",
+        "name": "Redragon Pro",
+        "category": "Notebook",
+        "price": 1100.0,
+        "rating": 0,
+        "review": ""
+    },
+    {
+        "product_id": "10",
+        "name": "Redragon Aspire3",
+        "category": "Notebook",
+        "price": 600.0,
+        "rating": 0,
+        "review": ""
+    },
+    {
+        "product_id": "11",
+        "name": "Samsung X23",
+        "category": "Notebook",
+        "price": 1000.0,
+        "rating": 0,
+        "review": ""
+    },
+    {
+        "product_id": "12",
+        "name": "Samsung x40",
+        "category": "Notebook",
+        "price": 1450.0,
+        "rating": 0,
+        "review": ""
+    },
+    {
+        "product_id": "13",
+        "name": "Samsung Headphones Pro",
+        "category": "Headset",
+        "price": 750.0,
+        "rating": 0,
+        "review": ""
+    },
+    {
+        "product_id": "14",
+        "name": "Redragon Mouse Pro",
+        "category": "Mouse",
+        "price": 250.0,
+        "rating": 0,
+        "review": ""
+    },
+    {
+        "product_id": "15",
+        "name": "Redragon Mouse Simple",
+        "category": "Mouse",
+        "price": 100.0,
+        "rating": 0,
+        "review": ""
+    },
+    {
+        "product_id": "16",
+        "name": "Samsung HS 30",
+        "category": "Headset",
+        "price": 75.0,
+        "rating": 0,
+        "review": ""
+    },
+    {
+        "product_id": "17",
+        "name": "Samsung Key30",
+        "category": "Keyboard",
+        "price": 400.0,
+        "rating": 0,
+        "review": ""
+    },
+    {
+        "product_id": "18",
+        "name": "Samsung KeyPro",
+        "category": "Keyboard",
+        "price": 600.0,
+        "rating": 0,
+        "review": ""
+    },
+    {
+        "product_id": "19",
+        "name": "Acer Nitro 5",
+        "category": "Notebook",
+        "price": 900.0,
+        "rating": 0,
+        "review": ""
+    },
+    {
+        "product_id": "20",
+        "name": "Allienware M16",
+        "category": "Notebook",
+        "price": 2500.0,
+        "rating": 0,
+        "review": ""
+    },
+    {
+        "product_id": "21",
+        "name": "Logitech M320",
+        "category": "Mouse",
+        "price": 300.0,
+        "rating": 0,
+        "review": ""
+    },
+    {
+        "product_id": "22",
+        "name": "Logitech M500 Pro",
+        "category": "Mouse",
+        "price": 650.0,
+        "rating": 0,
+        "review": ""
+    },
+    {
+        "product_id": "23",
+        "name": "Logitech MK Pro",
+        "category": "Keyboard",
+        "price": 1100.0,
         "rating": 0,
         "review": ""
     }

@@ -1023,5 +1023,59 @@ class ProductBrowsingView:
             review_button.pack()
 
     def review_product(self, order, order_details_window):
-        # Implement the functionality for reviewing the product
-        pass
+        review_window = tk.Toplevel(order_details_window)
+        review_window.title("Product Reviews")
+        review_window.geometry("400x300")
+
+        tk.Label(
+            review_window, text="Write Reviews and Rate Products", font=("Arial", 12)
+        ).pack()
+
+        if isinstance(order, Order):
+            for product in order.products:
+                if isinstance(product, Product):
+                    tk.Label(review_window, text=f"Product: {product.name}").pack()
+                    rating_label = tk.Label(review_window, text="Rating (1-5):")
+                    rating_label.pack()
+                    rating_entry = tk.Entry(review_window)
+                    rating_entry.pack()
+
+                    review_label = tk.Label(review_window, text="Review:")
+                    review_label.pack()
+                    review_entry = tk.Entry(review_window)
+                    review_entry.pack()
+
+                    save_review_button = tk.Button(
+                        review_window,
+                        text="Save Review",
+                        command=lambda prod=product: self.save_review(
+                            prod,
+                            rating_entry.get(),
+                            review_entry.get(),
+                            review_window,
+                            order,
+                        ),
+                    )
+                    save_review_button.pack()
+        else:
+            messagebox.showerror("Error", "Invalid order format")
+
+    def save_review(self, product, rating, review, review_window, order):
+        try:
+            rating = int(rating)
+            if 1 <= rating <= 5:
+                product.rating = rating
+                product.review = review
+                self.product_control.save_products()
+                messagebox.showinfo("Success", "Review saved successfully!")
+                review_window.destroy()
+                self.update_order_details(order)
+            else:
+                messagebox.showerror("Error", "Please enter a rating between 1 and 5.")
+        except ValueError:
+            messagebox.showerror("Error", "Please enter a valid integer rating.")
+
+    def remove_review_button(self, order, order_details_window):
+        for widget in order_details_window.winfo_children():
+            if isinstance(widget, tk.Button) and widget["text"] == "Review Product":
+                widget.destroy()
