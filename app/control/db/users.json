@@ -5,9 +5,7 @@
         "address": "Avenida Roberto Mascarenhas de Brito, 126",
         "username": "alejitors",
         "password": "123",
-        "cart": {
-            "1": 1
-        },
+        "cart": {},
         "orders": [
             {
                 "order_number": 1,
@@ -35,7 +33,7 @@
                 "exp_date": "1111",
                 "cvv": "123",
                 "card_name": "Alejandro Reyes",
-                "status": "Payment Approved - Product Shipped - Product Received"
+                "status": "Payment Approved - Product Shipped - Awaiting Receipt"
             },
             {
                 "order_number": 2,
@@ -84,6 +82,87 @@
                 "cvv": "111",
                 "card_name": "Alejandro",
                 "status": "Payment Approved - Product Shipped - Awaiting Receipt"
+            },
+            {
+                "order_number": 4,
+                "products": [
+                    {
+                        "product_id": "2",
+                        "name": "Samsung Book3 Ultra",
+                        "category": "Notebook",
+                        "price": 3000.0,
+                        "rating": 0,
+                        "review": ""
+                    }
+                ],
+                "total_price": 3000.0,
+                "address": "Avenida Roberto Mascarenhas de Brito, 126",
+                "card_number": "1111111111111111",
+                "exp_date": "11111",
+                "cvv": "111",
+                "card_name": "Alejandro",
+                "status": "Payment Approved - Product Shipped - Awaiting Receipt"
+            },
+            {
+                "order_number": 5,
+                "products": [
+                    {
+                        "product_id": "2",
+                        "name": "Samsung Book3 Ultra",
+                        "category": "Notebook",
+                        "price": 3000.0,
+                        "rating": 0,
+                        "review": ""
+                    }
+                ],
+                "total_price": 3000.0,
+                "address": "Avenida Roberto Mascarenhas de Brito, 126",
+                "card_number": "11111111",
+                "exp_date": "11111",
+                "cvv": "123",
+                "card_name": "Alejandro",
+                "status": "Payment Approved - Product Shipped - Awaiting Receipt"
+            },
+            {
+                "order_number": 6,
+                "products": [
+                    {
+                        "product_id": "2",
+                        "name": "Samsung Book3 Ultra",
+                        "category": "Notebook",
+                        "price": 3000.0,
+                        "rating": 0,
+                        "review": ""
+                    }
+                ],
+                "total_price": 3000.0,
+                "address": "Avenida Roberto Mascarenhas de Brito, 126",
+                "card_number": "1",
+                "exp_date": "1",
+                "cvv": "1",
+                "card_name": "1",
+                "status": "Payment Approved - Product Shipped - Awaiting Receipt"
+            },
+            {
+                "order_number": 7,
+                "products": [
+                    "1",
+                    {
+                        "product_id": "2",
+                        "name": "Samsung Book3 Ultra",
+                        "category": "Notebook",
+                        "price": 3000.0,
+                        "rating": 0,
+                        "review": ""
+                    }
+                ],
+                "total_price": 9000.0,
+                "address": "Avenida Roberto Mascarenhas de Brito, 126",
+                "card_number": "111111111111",
+                "exp_date": "11111",
+                "cvv": "111",
+                "card_name": "Alejandro",
+                "status": "Payment Approved - Product Shipped - Product Received"
             }
         ]
     },

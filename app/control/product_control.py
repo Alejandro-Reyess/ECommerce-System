@@ -5,7 +5,7 @@ from models.product import Product
 
 class ProductControl:
     def __init__(self, products):
-        self.products = products
+        self.products = products if products else []
 
     def get_directory(self):
         return os.path.abspath(

@@ -3,7 +3,15 @@
         "product_id": "1",
         "name": "Samsung Notebook",
         "category": "Notebook",
-        "price": 800.0,
+        "price": "800",
+        "rating": 0,
+        "review": ""
+    },
+    {
+        "product_id": "2",
+        "name": "Samsung Book3 Ultra",
+        "category": "Notebook",
+        "price": 3000.0,
         "rating": 0,
         "review": ""
     }

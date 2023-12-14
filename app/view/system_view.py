@@ -3,6 +3,7 @@ from tkinter import messagebox
 from tkinter import scrolledtext
 import tkinter.simpledialog as simpledialog
 from models.order import Order
+from models.product import Product
 from control.user_control import UserControl
 from control.admin_user_control import AdminUserControl
 from control.product_control import ProductControl
@@ -281,7 +282,8 @@ class AdminManageProductView:
     def refresh_product_list(self):
         for widget in self.product_list_frame.winfo_children():
             widget.destroy()
-
+        for widget in self.scrollable_frame.winfo_children():
+            widget.destroy()
         self.show_products()
 
     def edit_product(self, product):
@@ -350,7 +352,6 @@ class AdminManageProductView:
         if confirmation:
             if self.product_control.delete_product(product.product_id):
                 messagebox.showinfo("Success", "Product deleted successfully")
-
                 self.refresh_product_list()
 
     def logout(self):
@@ -723,18 +724,23 @@ class ProductBrowsingView:
             add_to_cart_button = tk.Button(
                 details_window,
                 text="Add to Cart",
-                command=lambda: self.add_to_cart(product),
+                command=lambda prod=product: self.add_to_cart(
+                    prod
+                ),  # Pass the product instance
             )
             add_to_cart_button.place(x=300, y=10)
         else:
             messagebox.showerror("Error", "User not found!")
 
     def add_to_cart(self, product):
-        if product in self.logged_user.cart:
-            self.logged_user.cart[product] += 1
+        if isinstance(product, Product):
+            if product in self.logged_user.cart:
+                self.logged_user.cart[product] += 1
+            else:
+                self.logged_user.cart[product] = 1
+            messagebox.showinfo("Success", "Product added to cart!")
         else:
-            self.logged_user.cart[product] = 1
-        messagebox.showinfo("Success", "Product added to cart!")
+            messagebox.showerror("Error", "Invalid product!")
 
     def view_cart(self):
         cart_window = tk.Toplevel(self.root)
@@ -747,11 +753,12 @@ class ProductBrowsingView:
         cart_listbox.pack(fill=tk.BOTH, expand=True)
 
         for product, quantity in self.logged_user.cart.items():
-            total_price = float(product.price) * quantity
-            cart_listbox.insert(
-                tk.END,
-                f"{product.name} - Quantity: {quantity} - Total Price: ${total_price:.2f}",
-            )
+            if isinstance(product, Product):
+                total_price = float(product.price) * quantity
+                cart_listbox.insert(
+                    tk.END,
+                    f"{product.name} - Quantity: {quantity} - Total Price: ${total_price:.2f}",
+                )
 
         modify_quantity_button = tk.Button(
             cart_window,
@@ -770,20 +777,29 @@ class ProductBrowsingView:
         buy_button = tk.Button(
             cart_window,
             text="Buy",
-            command=self.buy_products,
+            command=lambda: self.order_placement(cart_window),
         )
         buy_button.pack()
 
     def modify_quantity(self, cart_listbox):
         selected_index = cart_listbox.curselection()
         if selected_index:
-            selected_product = list(self.logged_user.cart.keys())[selected_index[0]]
-            new_quantity = simpledialog.askinteger(
-                "Modify Quantity", f"Enter new quantity for {selected_product.name}:"
-            )
-            if new_quantity is not None and new_quantity > 0:
-                self.logged_user.cart[selected_product] = new_quantity
-                self.update_cart_list(cart_listbox)
+            selected_item = cart_listbox.get(selected_index)
+            product_name = selected_item.split(" - Quantity: ")[0]
+            selected_product = None
+            for product, quantity in self.logged_user.cart.items():
+                if isinstance(product, Product) and product.name == product_name:
+                    selected_product = product
+                    break
+
+            if selected_product is not None:
+                new_quantity = simpledialog.askinteger(
+                    "Modify Quantity",
+                    f"Enter new quantity for {selected_product.name}:",
+                )
+                if new_quantity is not None and new_quantity > 0:
+                    self.logged_user.cart[selected_product] = new_quantity
+                    self.update_cart_list(cart_listbox)
 
     def remove_product(self, cart_listbox):
         selected_index = cart_listbox.curselection()
@@ -795,15 +811,17 @@ class ProductBrowsingView:
     def update_cart_list(self, cart_listbox):
         cart_listbox.delete(0, tk.END)
         for product, quantity in self.logged_user.cart.items():
-            total_price = float(product.price) * quantity
-            cart_listbox.insert(
-                tk.END,
-                f"{product.name} - Quantity: {quantity} - Total Price: ${total_price:.2f}",
-            )
+            if isinstance(product, Product):
+                total_price = float(product.price) * quantity
+                cart_listbox.insert(
+                    tk.END,
+                    f"{product.name} - Quantity: {quantity} - Total Price: ${total_price:.2f}",
+                )
         if len(self.logged_user.cart) == 0:
             cart_listbox.destroy()
 
-    def order_placement(self):
+    def order_placement(self, cart_window):
+        cart_window.destroy()
         order_window = tk.Toplevel(self.root)
         order_window.title("Order Placement")
         order_window.geometry("600x600")
@@ -817,12 +835,12 @@ class ProductBrowsingView:
 
         total_price = 0
         for product, quantity in self.logged_user.cart.items():
-            product_total = float(product.price) * quantity
-            total_price += product_total
-            cart_listbox.insert(
-                tk.END,
-                f"{product.name} - Quantity: {quantity} - Total Price: ${product_total:.2f}\n",
-            )
+            if isinstance(product, Product):
+                total_price = float(product.price) * quantity
+                cart_listbox.insert(
+                    tk.END,
+                    f"{product.name} - Quantity: {quantity} - Total Price: ${total_price:.2f}",
+                )
 
         tk.Label(order_window, text=f"Total Price: ${total_price:.2f}").pack()
         tk.Label(order_window, text="Address:", font=("Arial", 12, "bold")).pack()
@@ -858,12 +876,20 @@ class ProductBrowsingView:
                 exp_date_entry.get(),
                 cvv_entry.get(),
                 card_name_entry.get(),
+                cart_listbox,
             ),
         )
         finish_button.pack()
 
     def finalize_purchase(
-        self, order_window, total_price, card_number, exp_date, cvv, card_name
+        self,
+        order_window,
+        total_price,
+        card_number,
+        exp_date,
+        cvv,
+        card_name,
+        cart_listbox,
     ):
         if not (card_number and exp_date and cvv and card_name):
             messagebox.showerror("Error", "Please fill in all required fields.")
@@ -881,6 +907,9 @@ class ProductBrowsingView:
         )
         logged_user.add_order(new_order)
         self.user_control.save_users()
+
+        logged_user.cart.clear()
+        cart_listbox.delete(1.0, tk.END)
         order_window.destroy()
         messagebox.showinfo("Success", "Purchase completed successfully!")
 
