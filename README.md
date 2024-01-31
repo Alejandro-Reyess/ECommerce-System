@@ -5,7 +5,8 @@ Adicionado a função de Product Browsing na aula do dia 06 de dezembro<br>
 Adicionado a função de Shopping Cart na aula do dia 06 de dezembro<br>
 Adicionado a função de Product Management na aula do dia 06 de dezembro<br>
 Adicionado a função de Order Placement na aula do dia 13 de dezembro<br>
-Adicionado a função de Order Tracking na aula do dia 13 de dezembro<br><br>
+Adicionado a função de Order Tracking na aula do dia 13 de dezembro<br>
+Adicioando a função de Rate and Review<br><br>
 
 Versão Python 3.11.7<br>
 Para rodar o código é preciso acessar a pasta app - cd app e depois rodar o arquivo main - python main.py<br><br>
