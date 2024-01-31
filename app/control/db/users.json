@@ -4,6 +4,36 @@
         "email": "alejandro@gmail.com",
         "address": "Avenida Roberto Mascarenhas de Brito, 126",
         "username": "alejitors",
+        "password": "1234",
+        "cart": {},
+        "orders": [
+            {
+                "order_number": 1,
+                "products": [
+                    {
+                        "product_id": "1",
+                        "name": "Samsung Notebook",
+                        "category": "Notebook",
+                        "price": 800.0,
+                        "rating": 0,
+                        "review": ""
+                    }
+                ],
+                "total_price": 2400.0,
+                "address": "Avenida Roberto Mascarenhas de Brito, 126",
+                "card_number": "1111",
+                "exp_date": "1111",
+                "cvv": "111",
+                "card_name": "Alejandro",
+                "status": "Payment Approved - Product Shipped - Product Received"
+            }
+        ]
+    },
+    {
+        "name": "vital",
+        "email": "vital@mil",
+        "address": "a1a",
+        "username": "vital",
         "password": "123",
         "cart": {},
         "orders": []

@@ -4,8 +4,8 @@
         "name": "Samsung Notebook",
         "category": "Notebook",
         "price": 800.0,
-        "rating": 0,
-        "review": ""
+        "rating": 3,
+        "review": "Nice product"
     },
     {
         "product_id": "2",

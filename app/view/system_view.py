@@ -510,15 +510,13 @@ class ProductBrowsingView:
         max_price = self.max_price_entry.get()
 
         if category == "Select Category" and not min_price and not max_price:
-            self.display_all_products()  # Se nenhum filtro aplicado, exibir todos os produtos
+            self.display_all_products()
         else:
-            # Aplicar filtro por categoria
             if category != "Select Category":
                 self.filtered_products = self.product_control.filter_by_category(
                     category
                 )
 
-            # Aplicar filtro por preço
             if min_price or max_price:
                 filtered_by_price = self.filter_by_price_range(min_price, max_price)
                 if self.filtered_products:
@@ -571,7 +569,7 @@ class ProductBrowsingView:
             else:
                 self.filtered_products = filtered_products
         else:
-            self.apply_filters()  # Se nenhum preço especificado, aplicar outros filtros
+            self.apply_filters()
 
         self.sort_products(self.sort_options.get())
 
@@ -681,7 +679,7 @@ class ProductBrowsingView:
         new_password,
     ):
         updated = self.user_control.edit_user(
-            self.logged_user.username,  # Usando self.logged_user.username para identificar o usuário
+            self.logged_user.username,
             {
                 "name": new_name,
                 "email": new_email,
@@ -724,9 +722,7 @@ class ProductBrowsingView:
             add_to_cart_button = tk.Button(
                 details_window,
                 text="Add to Cart",
-                command=lambda prod=product: self.add_to_cart(
-                    prod
-                ),  # Pass the product instance
+                command=lambda prod=product: self.add_to_cart(prod),
             )
             add_to_cart_button.place(x=300, y=10)
         else:
@@ -995,19 +991,16 @@ class ProductBrowsingView:
             order.get_status()
             == "Payment Approved - Product Shipped - Product Received"
         ):
-            # Remove the "Confirm Receipt" button
             self.remove_confirm_receipt_button(order_details_window)
 
-            # Add the "Review Product" button
             self.add_review_button(order, order_details_window)
 
     def remove_confirm_receipt_button(self, order_details_window):
         for widget in order_details_window.winfo_children():
             if isinstance(widget, tk.Button) and widget["text"] == "Confirm Receipt":
-                widget.destroy()  # Use destroy() instead of pack_forget()
+                widget.destroy()
 
     def add_review_button(self, order, order_details_window):
-        # Check if the "Review Product" button already exists before adding it
         existing_review_buttons = [
             widget
             for widget in order_details_window.winfo_children()
